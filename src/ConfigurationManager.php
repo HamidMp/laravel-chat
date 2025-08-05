@@ -14,11 +14,17 @@ class ConfigurationManager
         $pagination = config('musonza_chat.pagination', []);
 
         return [
-            'page'     => $pagination['page'] ?? 1,
-            'perPage'  => $pagination['perPage'] ?? 25,
-            'sorting'  => $pagination['sorting'] ?? 'asc',
-            'columns'  => $pagination['columns'] ?? ['*'],
+            'page' => $pagination['page'] ?? 1,
+            'perPage' => $pagination['perPage'] ?? 25,
+            'sorting' => $pagination['sorting'] ?? 'asc',
+            'columns' => $pagination['columns'] ?? ['*'],
             'pageName' => $pagination['pageName'] ?? 'page',
         ];
     }
+
+    public static function databaseConnection()
+    {
+        return config('musonza_chat.database_connection');
+    }
+
 }

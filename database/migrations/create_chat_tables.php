@@ -14,7 +14,7 @@ class CreateChatTables extends Migration
      */
     public function up()
     {
-        Schema::create(ConfigurationManager::CONVERSATIONS_TABLE, function (Blueprint $table) {
+        Schema::connection(ConfigurationManager::databaseConnection())->create(ConfigurationManager::CONVERSATIONS_TABLE, function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->boolean('private')->default(true);
             $table->boolean('direct_message')->default(false);
@@ -22,7 +22,7 @@ class CreateChatTables extends Migration
             $table->timestamps();
         });
 
-        Schema::create(ConfigurationManager::PARTICIPATION_TABLE, function (Blueprint $table) {
+        Schema::connection(ConfigurationManager::databaseConnection())->create(ConfigurationManager::PARTICIPATION_TABLE, function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('conversation_id')->unsigned();
             $table->bigInteger('messageable_id')->unsigned();
@@ -38,7 +38,7 @@ class CreateChatTables extends Migration
                 ->onDelete('cascade');
         });
 
-        Schema::create(ConfigurationManager::MESSAGES_TABLE, function (Blueprint $table) {
+        Schema::connection(ConfigurationManager::databaseConnection())->create(ConfigurationManager::MESSAGES_TABLE, function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->text('body');
             $table->bigInteger('conversation_id')->unsigned();
@@ -58,7 +58,7 @@ class CreateChatTables extends Migration
                 ->onDelete('cascade');
         });
 
-        Schema::create(ConfigurationManager::MESSAGE_NOTIFICATIONS_TABLE, function (Blueprint $table) {
+        Schema::connection(ConfigurationManager::databaseConnection())->create(ConfigurationManager::MESSAGE_NOTIFICATIONS_TABLE, function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('message_id')->unsigned();
             $table->bigInteger('messageable_id')->unsigned();
@@ -97,9 +97,9 @@ class CreateChatTables extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists(ConfigurationManager::MESSAGE_NOTIFICATIONS_TABLE);
-        Schema::dropIfExists(ConfigurationManager::MESSAGES_TABLE);
-        Schema::dropIfExists(ConfigurationManager::PARTICIPATION_TABLE);
-        Schema::dropIfExists(ConfigurationManager::CONVERSATIONS_TABLE);
+        Schema::connection(ConfigurationManager::databaseConnection())->dropIfExists(ConfigurationManager::MESSAGE_NOTIFICATIONS_TABLE);
+        Schema::connection(ConfigurationManager::databaseConnection())->dropIfExists(ConfigurationManager::MESSAGES_TABLE);
+        Schema::connection(ConfigurationManager::databaseConnection())->dropIfExists(ConfigurationManager::PARTICIPATION_TABLE);
+        Schema::connection(ConfigurationManager::databaseConnection())->dropIfExists(ConfigurationManager::CONVERSATIONS_TABLE);
     }
 }

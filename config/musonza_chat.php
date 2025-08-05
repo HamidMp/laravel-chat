@@ -9,6 +9,8 @@ return [
      */
     'broadcasts' => false,
 
+    'database_connection' => config('database.default'),
+
     /*
      * Specify the fields that you want to return each time for the sender.
      * If not set or empty, all the columns for the sender will be returned
