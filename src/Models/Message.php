@@ -4,7 +4,7 @@ namespace Musonza\Chat\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Musonza\Chat\BaseModel;
-use Musonza\Chat\Chat;
+use Musonza\Chat\Facades\ChatFacade as Chat;
 use Musonza\Chat\ConfigurationManager;
 use Musonza\Chat\Eventing\AllParticipantsDeletedMessage;
 use Musonza\Chat\Eventing\EventGenerator;
@@ -43,7 +43,7 @@ class Message extends BaseModel
 
     public function participation()
     {
-        return $this->belongsTo(Participation::class, 'participation_id');
+        return $this->belongsTo(Chat::modelClass('participation'), 'participation_id');
     }
 
     public function getSenderAttribute()
@@ -65,7 +65,7 @@ class Message extends BaseModel
 
     public function unreadCount(Model $participant)
     {
-        return MessageNotification::where('messageable_id', $participant->getKey())
+        return Chat::modelClass('message_notification')::where('messageable_id', $participant->getKey())
             ->where('is_seen', 0)
             ->where('messageable_type', $participant->getMorphClass())
             ->count();
@@ -73,7 +73,7 @@ class Message extends BaseModel
 
     public function conversation()
     {
-        return $this->belongsTo(Conversation::class, 'conversation_id');
+        return $this->belongsTo(Chat::modelClass('conversation'), 'conversation_id');
     }
 
     /**
@@ -112,7 +112,7 @@ class Message extends BaseModel
      */
     protected function createNotifications($message)
     {
-        MessageNotification::make($message, $message->conversation);
+        Chat::modelClass('message_notification')::make($message, $message->conversation);
     }
 
     /**
@@ -124,7 +124,7 @@ class Message extends BaseModel
      */
     public function trash(Model $participant): void
     {
-        MessageNotification::where('messageable_id', $participant->getKey())
+        Chat::modelClass('message_notification')::where('messageable_id', $participant->getKey())
             ->where('messageable_type', $participant->getMorphClass())
             ->where('message_id', $this->getKey())
             ->delete();
@@ -136,7 +136,7 @@ class Message extends BaseModel
 
     public function unDeletedCount()
     {
-        return MessageNotification::where('message_id', $this->getKey())
+        return Chat::modelClass('message_notification')::where('message_id', $this->getKey())
             ->count();
     }
 
@@ -149,7 +149,7 @@ class Message extends BaseModel
      */
     public function getNotification(Model $participant): MessageNotification
     {
-        return MessageNotification::where('messageable_id', $participant->getKey())
+        return Chat::modelClass('message_notification')::where('messageable_id', $participant->getKey())
             ->where('messageable_type', $participant->getMorphClass())
             ->where('message_id', $this->id)
             ->select([
@@ -171,7 +171,7 @@ class Message extends BaseModel
 
     public function flagged(Model $participant): bool
     {
-        return (bool) MessageNotification::where('messageable_id', $participant->getKey())
+        return (bool) Chat::modelClass('message_notification')::where('messageable_id', $participant->getKey())
             ->where('message_id', $this->id)
             ->where('messageable_type', $participant->getMorphClass())
             ->where('flagged', 1)
@@ -180,7 +180,7 @@ class Message extends BaseModel
 
     public function toggleFlag(Model $participant): self
     {
-        MessageNotification::where('messageable_id', $participant->getKey())
+        Chat::modelClass('message_notification')::where('messageable_id', $participant->getKey())
             ->where('message_id', $this->id)
             ->where('messageable_type', $participant->getMorphClass())
             ->update(['flagged' => $this->flagged($participant) ? false : true]);

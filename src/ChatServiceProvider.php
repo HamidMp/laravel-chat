@@ -36,6 +36,7 @@ class ChatServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerChat();
+        $this->bindModels();
     }
 
     /**
@@ -45,9 +46,34 @@ class ChatServiceProvider extends ServiceProvider
      */
     private function registerChat()
     {
-        $this->app->bind('\Musonza\Chat\Chat', function () {
-            return $this->app->make(Chat::class);
+        $this->app->bind('chat', function ($app) {
+            return $app->make(Chat::class);
         });
+    }
+
+    private function bindModels()
+    {
+        $config = $this->app->make('config');
+
+        $this->app->bind(
+            \Musonza\Chat\Models\Conversation::class,
+            $config->get('musonza_chat.models.conversation')
+        );
+
+        $this->app->bind(
+            \Musonza\Chat\Models\Message::class,
+            $config->get('musonza_chat.models.message')
+        );
+
+        $this->app->bind(
+            \Musonza\Chat\Models\MessageNotification::class,
+            $config->get('musonza_chat.models.message_notification')
+        );
+
+        $this->app->bind(
+            \Musonza\Chat\Models\Participation::class,
+            $config->get('musonza_chat.models.participation')
+        );
     }
 
     /**

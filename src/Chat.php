@@ -140,4 +140,29 @@ class Chat
 
         return (is_array($fields) && !empty($fields)) ? $fields : null;
     }
+
+    /**
+     * Get a new instance of a model.
+     *
+     * @param string $modelAlias
+     * @param array  $attributes
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    public static function model(string $modelAlias, array $attributes = [])
+    {
+        return new (static::modelClass($modelAlias))($attributes);
+    }
+
+    /**
+     * Get the class name of a model.
+     *
+     * @param string $modelAlias
+     *
+     * @return string
+     */
+    public static function modelClass(string $modelAlias): string
+    {
+        return config('musonza_chat.models.' . $modelAlias);
+    }
 }

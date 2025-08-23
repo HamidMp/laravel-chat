@@ -2,7 +2,7 @@
 
 namespace Musonza\Chat\Models;
 
-use Chat;
+use Musonza\Chat\Facades\ChatFacade as Chat;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -44,7 +44,7 @@ class Conversation extends BaseModel
      */
     public function participants()
     {
-        return $this->hasMany(Participation::class);
+        return $this->hasMany(Chat::modelClass('participation'));
     }
 
     public function getParticipants()
@@ -59,7 +59,7 @@ class Conversation extends BaseModel
      */
     public function last_message()
     {
-        return $this->hasOne(Message::class)
+        return $this->hasOne(Chat::modelClass('message'))
             ->orderBy($this->tablePrefix.'messages.id', 'desc')
             ->with('participation');
     }
@@ -71,7 +71,7 @@ class Conversation extends BaseModel
      */
     public function messages()
     {
-        return $this->hasMany(Message::class, 'conversation_id'); //->with('sender');
+        return $this->hasMany(Chat::modelClass('message'), 'conversation_id'); //->with('sender');
     }
 
     /**
@@ -256,7 +256,7 @@ class Conversation extends BaseModel
      */
     public function unReadNotifications(Model $participant): Collection
     {
-        $notifications = MessageNotification::where([
+        $notifications = Chat::modelClass('message_notification')::where([
             ['messageable_id', '=', $participant->getKey()],
             ['messageable_type', '=', $participant->getMorphClass()],
             ['conversation_id', '=', $this->id],
@@ -384,13 +384,13 @@ class Conversation extends BaseModel
 
     public function unDeletedCount()
     {
-        return MessageNotification::where('conversation_id', $this->getKey())
+        return Chat::modelClass('message_notification')::where('conversation_id', $this->getKey())
             ->count();
     }
 
     private function notifications(Model $participant, $readAll)
     {
-        $notifications = MessageNotification::where('messageable_id', $participant->getKey())
+        $notifications = Chat::modelClass('message_notification')::where('messageable_id', $participant->getKey())
             ->where($this->tablePrefix.'message_notifications.messageable_type', $participant->getMorphClass())
             ->where('conversation_id', $this->id);
 
@@ -403,7 +403,7 @@ class Conversation extends BaseModel
 
     private function clearConversation($participant): void
     {
-        MessageNotification::where('messageable_id', $participant->getKey())
+        Chat::modelClass('message_notification')::where('messageable_id', $participant->getKey())
             ->where($this->tablePrefix.'message_notifications.messageable_type', $participant->getMorphClass())
             ->where('conversation_id', $this->getKey())
             ->delete();

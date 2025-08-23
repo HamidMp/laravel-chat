@@ -53,5 +53,8 @@
                 "Chat": "Musonza\\Chat\\Facades\\ChatFacade"
             }
         }
+    },
+    "replace": {
+        "musonza/chat": "self.version"
     }
 }

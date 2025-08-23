@@ -3,6 +3,7 @@
 namespace Musonza\Chat\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Musonza\Chat\Facades\ChatFacade as Chat;
 //use Illuminate\Database\Eloquent\SoftDeletes;
 use Musonza\Chat\BaseModel;
 use Musonza\Chat\ConfigurationManager;
@@ -28,7 +29,7 @@ class Participation extends BaseModel
      */
     public function conversation()
     {
-        return $this->belongsTo(Conversation::class, 'conversation_id');
+        return $this->belongsTo(Chat::modelClass('conversation'), 'conversation_id');
     }
 
     public function messageable()

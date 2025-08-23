@@ -57,4 +57,11 @@ return [
         'message'      => null,
         'participant'  => null,
     ],
+
+    'models' => [
+        'conversation' => \Musonza\Chat\Models\Conversation::class,
+        'message' => \Musonza\Chat\Models\Message::class,
+        'participation' => \Musonza\Chat\Models\Participation::class,
+        'message_notification' => \Musonza\Chat\Models\MessageNotification::class,
+    ],
 ];
